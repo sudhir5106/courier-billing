@@ -157,7 +157,7 @@ $str = "";
               <th>Amount</th>
               <th>Date From</th>             
               <th>Date To</th>              
-              <th>Invoice</th>
+              <!--<th>Invoice</th>-->
               <th>Action</th>
             </tr>
           </thead>
@@ -170,7 +170,7 @@ $str = "";
             <tr>
               <td ><?php echo $i;?></td>
               <td><?php echo $val['Client_Name'].'-'.$val['Client_Code'];?></td>
-              <td><a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank"><?php echo $val['Invoice_No'];?></a></td>
+              <td><!--<a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank">--><?php echo $val['Invoice_No'];?><!--</a>--></td>
               <td><?php echo $val['Invoice_Amount'];?></td>
               <td><?php echo $val['Fuel_Surcharge'];?></td>
               <td><?php echo $val['Subtotal'];?></td>
@@ -181,7 +181,7 @@ $str = "";
               <td><?php echo $val['Date_From'];?></td>              
               <td><?php echo $val['Date_To'];?></td>
               
-              <td><a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank"><i class="fa fa-file-pdf-o danger"></i></a></td>
+              <!--<td><a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank"><i class="fa fa-file-pdf-o danger"></i></a></td>-->
               <td>
               
                 <a href="edit-invoice.php?id=<?php echo $val['Invoice_Id']; ?>" class="btn btn-sm btn-success">Edit</a>
