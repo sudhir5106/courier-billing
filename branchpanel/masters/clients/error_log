@@ -1,0 +1,21 @@
+[10-May-2017 21:55:07 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 34
+[10-May-2017 21:55:07 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 47
+[10-May-2017 21:55:07 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 48
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 34
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 47
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 48
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/masters/clients/index.php on line 15
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Warning:  mysql_num_fields() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 254
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 260
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/masters/clients/index.php on line 43
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Warning:  mysql_num_fields() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 254
+[11-May-2017 12:41:02 Asia/Calcutta] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 260
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 34
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 47
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Notice:  Undefined offset: 1 in /home/suncroso/public_html/courier/branchpanel/include/header.php on line 48
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/masters/clients/index.php on line 15
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Warning:  mysql_num_fields() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 254
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 260
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Notice:  Undefined index: buser in /home/suncroso/public_html/courier/branchpanel/masters/clients/index.php on line 43
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Warning:  mysql_num_fields() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 254
+[11-May-2017 12:41:53 Asia/Calcutta] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, boolean given in /home/suncroso/public_html/courier/libraries/classes/DBConn.php on line 260
