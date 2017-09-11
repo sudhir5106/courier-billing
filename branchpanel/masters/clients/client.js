@@ -312,12 +312,42 @@ $(document).ready(function(){
 		
 	});
 	
+	//////////////////////////////////////////
+	// check if client is within state or not
+	//////////////////////////////////////////
+	$(document).on('click', '#gstwithinstate', function() {
+		
+		if($(this).is(":checked")) {							
+			$(this).val("1");
+		}
+		else{
+			$(this).val("0");
+		}
+	});
+	
+	//////////////////////////////////////////////////
+	// check if billing address same as address or not
+	//////////////////////////////////////////////////
+	$(document).on('click', '#billingAddChckBx', function() {
+		
+		if($(this).is(":checked")) {							
+			$("#billingAdd").val($("#address").val());
+		}
+		else{
+			$("#billingAdd").val("");
+		}
+	});
+	
 	
 	//////////////////////////////////
 	// on click of submit button
 	//////////////////////////////////
 	$(document).on('click', '#submit', function() {
 	
+		if($("#gstwithinstate").val()=='on'){
+			$("#gstwithinstate").val('0');
+		}
+		
 		flag=$("#insertClient").valid();
 		
 		if (flag==true)
@@ -328,7 +358,9 @@ $(document).ready(function(){
 			formdata.append('client_name', $("#client_name").val());
 			formdata.append('dest_id', $("#dest_id").val());
 			formdata.append('address', $("#address").val());
+			formdata.append('billingAdd', $("#billingAdd").val());
 			formdata.append('contact_no', $("#contact_no").val());
+			formdata.append('withinState', $("#gstwithinstate").val());
 			formdata.append('gstin', $("#gstin").val());
 			formdata.append('insurance', $("#insurance").val());
 			formdata.append('fuelSurcharge', $("#fuelSurcharge").val());
@@ -360,8 +392,13 @@ $(document).ready(function(){
 	// on click of edit button
 	//////////////////////////////////
 	$(document).on('click', '#edit', function() {
+		
+		if($("#gstwithinstate").val()=='on'){
+			$("#gstwithinstate").val('0');
+		}
 	
 		flag=$("#editClient").valid();
+		
 		if (flag==true)
 		{	
 			var formdata = new FormData();
@@ -371,7 +408,9 @@ $(document).ready(function(){
 			formdata.append('client_name', $("#client_name").val());
 			formdata.append('dest_id', $("#dest_id").val());
 			formdata.append('address', $("#address").val());
+			formdata.append('billingAdd', $("#billingAdd").val());
 			formdata.append('contact_no', $("#contact_no").val());
+			formdata.append('withinState', $("#gstwithinstate").val());
 			formdata.append('gstin', $("#gstin").val());
 			formdata.append('insurance', $("#insurance").val());
 			formdata.append('fuelSurcharge', $("#fuelSurcharge").val());
@@ -383,7 +422,7 @@ $(document).ready(function(){
 			   type: "POST",
 			   url: "client_curd.php",
 			   data:formdata,
-			   success: function(data){ //alert(data);
+			   success: function(data){ alert(data);
 				   x=data;
 				   if(x!=0)
 					{

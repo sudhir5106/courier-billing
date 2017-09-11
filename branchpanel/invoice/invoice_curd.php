@@ -567,7 +567,7 @@ if($_POST['type']=="generateInvoice")
 	else{
 		
 		
-		$cust=$rateClass->ExecuteQuery("SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, CO.Consignment_No, CO.Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name, B.Branch_Code, B.Branch_Name, B.Franchise_Name, B.Franchise_Logo, B.Address, DN.Destination_Name AS City, B.PAN_No, B.GSTIN, B.Service_Tax_No, C.Client_Name, C.Address AS Client_Address, C.GSTIN_No, C.Fuel_Surcharge, C.Email 
+		$cust=$rateClass->ExecuteQuery("SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, CO.Consignment_No, CO.Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name, B.Branch_Code, B.Branch_Name, B.Franchise_Name, B.Franchise_Logo, B.Address, DN.Destination_Name AS City, B.PAN_No, B.GSTIN, B.Service_Tax_No, C.Client_Name, C.Address AS Client_Address, C.Billing_Address AS Billing_Address, C.GST_Within_State, C.GSTIN_No, C.Fuel_Surcharge, C.Email 
 	
 		FROM tbl_consignments CO 
 		
@@ -767,8 +767,13 @@ if($_POST['type']=="generateInvoice")
 						<strong>To,</strong>
 						<br/>
 						'.$cust[1]['Client_Name'].'
-						<br/>'.$cust[1]['Client_Address'].', India<br>
-						GSTIN-'.$cust[1]['GSTIN_No'].'
+						<br/>'.$cust[1]['Client_Address'].', India<br><br>
+						
+						<strong>Billing Address:</strong><br>
+						'.$cust[1]['Client_Name'].'
+						<br/>'.$cust[1]['Billing_Address'].', India<br>
+						GSTIN-'.$cust[1]['GSTIN_No'].'<br>
+						PAN NO-
 					</td>
 					<td>
 						<strong>BILL NO. #'.$cust[1]['Branch_Code'].'-'.$invoiceNo.'</strong><br/>
@@ -1228,7 +1233,7 @@ if($_POST['type']=="update")
 		$num1=convertNum($num);
 		
 		// Get the data from invoice table
-		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address 
+		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GST_Within_State FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GST_Within_State, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address, (SELECT Billing_Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Billing_Address 
 	
 		FROM tbl_invoices I
 		
@@ -1289,7 +1294,7 @@ if($_POST['type']=="update")
 					<strong>To,</strong>
 					<br/>
 					'.$invoiceInfo[1]['Client_Name'].'
-					<br/>'.$invoiceInfo[1]['Client_Address'].', India 
+					<br/>'.$invoiceInfo[1]['Client_Address'].', India
 				</td>
                 <td>
 					<strong>BILL NO. #'.$invoiceInfo[1]['Invoice_No'].'</strong><br>
@@ -1449,8 +1454,13 @@ abc;
 					<strong>To,</strong>
 					<br/>
 					'.$invoiceInfo[1]['Client_Name'].'
-					<br/>'.$invoiceInfo[1]['Client_Address'].', India <br>
-					GSTIN-'.$invoiceInfo[1]['GSTIN_No'].'
+					<br/>'.$invoiceInfo[1]['Client_Address'].', India <br><br>
+					
+					<strong>Billing Address:</strong><br>
+					'.$invoiceInfo[1]['Client_Name'].'
+					<br/>'.$invoiceInfo[1]['Billing_Address'].', India<br>
+					GSTIN-'.$invoiceInfo[1]['GSTIN_No'].'<br>
+					PAN NO-
 				</td>
                 <td>
 					<strong>BILL NO. #'.$invoiceInfo[1]['Invoice_No'].'</strong><br>

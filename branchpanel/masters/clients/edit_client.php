@@ -4,7 +4,7 @@ require_once(PATH_LIBRARIES.'/classes/DBConn.php');
 include(BRANCH_PATH_ADMIN_INCLUDE.'/header.php');
 $db = new DBConn();
 
-$sql = "SELECT Client_id, Client_Code, Client_Name, C.Destination_Id, Destination_Code, Destination_Name, Address, Contact_No, GSTIN_No, Insurance_Percent, Fuel_Surcharge, Email, Password 
+$sql = "SELECT Client_id, Client_Code, Client_Name, C.Destination_Id, Destination_Code, Destination_Name, Address, Billing_Address, Contact_No, GST_Within_State, GSTIN_No, Insurance_Percent, Fuel_Surcharge, Email, Password 
 FROM tbl_clients C
 RIGHT JOIN tbl_destinations D ON D.Destination_Id = C.Destination_Id
 WHERE Client_Id='".$_GET['id']."'";
@@ -93,6 +93,13 @@ $(document).ready(function(){
                 </div>
                 
                 <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="billingAdd">Billing Address <span>*</span>:</label>
+                  <div class="col-sm-3">
+                  	<input type="text" class="form-control input-sm" id="billingAdd" name="billingAdd" value="<?php echo $client[1]['Billing_Address']; ?>" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
                   <label class="control-label col-sm-3 mandatory" for="dest_code">City / Destination Code &amp; Name  <span>*</span>:</label>
                   <div class="col-sm-2">
                     <input type="text" class="form-control input-sm" id="dest_code" name="dest_code" placeholder="Ex: RAI, BHI..." value="<?php echo $client[1]['Destination_Code']; ?>" />
@@ -112,6 +119,13 @@ $(document).ready(function(){
                 </div>
                 
                 <hr />
+                
+                <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="gstwithinstate">GST Under Within State?:</label>
+                  <div class="col-sm-3">
+                    <input type="checkbox" class="input-sm" id="gstwithinstate" name="gstwithinstate" <?php echo $client[1]['GST_Within_State']==1?'Checked="Checked"':''; ?> />
+                  </div>
+                </div>
                 
                 <div class="form-group">
                   <label class="control-label col-sm-3 mandatory" for="gstin">GSTIN No:</label>

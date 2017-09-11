@@ -87,6 +87,20 @@ $(document).ready(function(){
                 </div>
                 
                 <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="billingAddChckBx"></label>
+                  <div class="col-sm-3">
+                  	<input type="checkbox" class="pull-left checkboxVerAlign" id="billingAddChckBx" name="billingAddChckBx" />&nbsp;&nbsp;Click If Billing Address Same as Address?
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="billingAdd">Billing Address <span>*</span>:</label>
+                  <div class="col-sm-3">
+                  	<input type="text" class="form-control input-sm" id="billingAdd" name="billingAdd" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
                   <label class="control-label col-sm-3 mandatory" for="dest_code">City / Destination Code &amp; Name  <span>*</span>:</label>
                   <div class="col-sm-2">
                     <input type="text" class="form-control input-sm" id="dest_code" name="dest_code" placeholder="Ex: RAI, BHI..." />
@@ -105,6 +119,13 @@ $(document).ready(function(){
                 </div>
                 
                 <hr />
+                
+                <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="gstwithinstate">GST Under Within State?:</label>
+                  <div class="col-sm-3">
+                    <input type="checkbox" class="input-sm" id="gstwithinstate" name="gstwithinstate" />
+                  </div>
+                </div>
                 
                 <div class="form-group">
                   <label class="control-label col-sm-3 mandatory" for="gstin">GSTIN No:</label>
