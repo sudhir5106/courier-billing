@@ -609,15 +609,12 @@ $(document).ready(function(){
 	});// eof keyup function
 	
 	
-	/////////////////////////
-	// calls a function
+	//////////////////////////////////////
+	// call a function on page load
+	//////////////////////////////////////
 	reCalulate();
+	/////////////////////////
 	
-	/*if(new Date(fit_start_time) <= new Date(fit_end_time))
-	{//compare end <=, not >=
-		//your code here
-	}
-*/	
 	/////////////////////////////////////////
 	// this function is used to re-calculate the
 	// invoice amount
@@ -644,11 +641,26 @@ $(document).ready(function(){
 		if(noGstDate < dateto)
 		{
 
-			var sgst = (invoicesubtotal.toFixed(2) * parseFloat($("#SGSTpercent").val()))/100;
-			$("#sgst").val(sgst.toFixed(2));
-			
-			var cgst = (invoicesubtotal.toFixed(2) * parseFloat($("#CGSTpercent").val()))/100;
-			$("#cgst").val(cgst.toFixed(2));
+			if($("#GST_Within_State").val()=='0'){
+				var sgst = (invoicesubtotal.toFixed(2) * parseFloat($("#SGSTpercent").val()))/100;
+				$("#sgst").val(sgst.toFixed(2));
+				
+				var cgst = (invoicesubtotal.toFixed(2) * parseFloat($("#CGSTpercent").val()))/100;
+				$("#cgst").val(cgst.toFixed(2));
+				
+				var igst = parseFloat("0.00");
+				$("#igst").val(igst.toFixed(2));
+			}
+			else{
+				var sgst = parseFloat("0.00");
+				$("#sgst").val(sgst.toFixed(2));
+				
+				var cgst = parseFloat("0.00");
+				$("#cgst").val(cgst.toFixed(2));
+				
+				var igst = (invoicesubtotal.toFixed(2) * parseFloat($("#IGSTpercent").val()))/100;
+				$("#igst").val(igst.toFixed(2));
+			}
 			
 			var serviceTax = parseFloat("0.00");
 			$("#serviceTax").val(serviceTax.toFixed(2));
@@ -659,7 +671,7 @@ $(document).ready(function(){
 			var kkTax = parseFloat("0.00");
 			$("#kkTax").val(kkTax.toFixed(2));
 			
-			var invoiceFinalAmt = parseFloat(invoicesubtotal + sgst + cgst + serviceTax + sbTax + kkTax);
+			var invoiceFinalAmt = parseFloat(invoicesubtotal + igst + sgst + cgst + serviceTax + sbTax + kkTax);
 			$("#invoiceFinalAmt").val(Math.round(parseFloat(invoiceFinalAmt)).toFixed(2));
 		}
 		else{
@@ -670,6 +682,8 @@ $(document).ready(function(){
 			var cgst = parseFloat("0.00");
 			$("#cgst").val(cgst.toFixed(2));
 			
+			var igst = parseFloat("0.00");
+			$("#igst").val(igst.toFixed(2));			
 			
 			var serviceTax = (invoicesubtotal.toFixed(2) * parseFloat($("#servicetaxpercent").val()))/100;
 			$("#serviceTax").val(serviceTax.toFixed(2));
@@ -680,14 +694,9 @@ $(document).ready(function(){
 			var kkTax = (invoicesubtotal.toFixed(2) * parseFloat($("#kkTaxPercent").val()))/100;
 			$("#kkTax").val(kkTax.toFixed(2));	
 			
-			var invoiceFinalAmt = parseFloat(invoicesubtotal + sgst + cgst + serviceTax + sbTax + kkTax);
+			var invoiceFinalAmt = parseFloat(invoicesubtotal + igst + sgst + cgst + serviceTax + sbTax + kkTax);
 			$("#invoiceFinalAmt").val(Math.round(parseFloat(invoiceFinalAmt)).toFixed(2));
 		}
-		
-		
-		
-		
-		
 		
 		
 	}
@@ -737,6 +746,8 @@ $(document).ready(function(){
 		     
 		if($(this).prop('checked') == true)
 		{
+			$(this).parents().children('td').css({'background-color':'#FA6C69', 'color':'#fff'})
+			
 			//$.inArray() method returns -1 when it doesn't find a match. 
 			//If the first element within the array matches value, $.inArray() returns 0
 			var trueFlaseVal = $.inArray($(this).attr("id"),checkedCons);
@@ -754,6 +765,8 @@ $(document).ready(function(){
 		}//eof if condition
 		
 		else{
+			
+			$(this).parents().children('td').css({'background-color':'none', 'color':'#000'})
 			
 			// remove all values from array
 			checkedCons = jQuery.grep(checkedCons, function( a ) {
@@ -879,6 +892,7 @@ $(document).ready(function(){
 		var fuelsrchrgPercent = $("#fuelsrchrgPercent").val();
 		var fuelsurcharge = $("#fuelsurcharge").val();
 		var invoiceSubtotal = $("#invoiceSubtotal").val();
+		var igst = $("#igst").val();
 		var sgst = $("#sgst").val();
 		var cgst = $("#cgst").val();
 		var serviceTax = $("#serviceTax").val();
@@ -912,6 +926,7 @@ $(document).ready(function(){
 		formdata.append('fuelsrchrgPercent', fuelsrchrgPercent);
 		formdata.append('fuelsurcharge', fuelsurcharge);
 		formdata.append('invoiceSubtotal', invoiceSubtotal);
+		formdata.append('igst', igst);
 		formdata.append('sgst', sgst);
 		formdata.append('cgst', cgst);
 		formdata.append('serviceTax', serviceTax);
@@ -1020,6 +1035,7 @@ $(document).ready(function(){
 		var fuelsrchrgPercent = $("#fuelsrchrgPercent").val();
 		var fuelsurcharge = $("#fuelsurcharge").val();
 		var invoiceSubtotal = $("#invoiceSubtotal").val();
+		var igst = $("#igst").val(); 
 		var sgst = $("#sgst").val();
 		var cgst = $("#cgst").val();
 		var serviceTax = $("#serviceTax").val();
@@ -1053,6 +1069,7 @@ $(document).ready(function(){
 		formdata.append('fuelsrchrgPercent', fuelsrchrgPercent);
 		formdata.append('fuelsurcharge', fuelsurcharge);
 		formdata.append('invoiceSubtotal', invoiceSubtotal);
+		formdata.append('igst', igst);
 		formdata.append('sgst', sgst);
 		formdata.append('cgst', cgst);
 		formdata.append('serviceTax', serviceTax);

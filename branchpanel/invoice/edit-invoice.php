@@ -4,7 +4,7 @@ require_once(PATH_LIBRARIES.'/classes/DBConn.php');
 include(BRANCH_PATH_ADMIN_INCLUDE.'/header.php');
 $db = new DBConn();
 
-$getConsignments = $db->ExecuteQuery("SELECT Consignment_Id, DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, Consignment_No, Send_By, Total_Weight_In_KG, Subtotal, Discount_Rs, Discount_Percent, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount, C.Client_Id, C.Destination_Id, Destination_Name, FORMAT(Fuel_Surcharge, 2) AS Fuel_Surcharge
+$getConsignments = $db->ExecuteQuery("SELECT Consignment_Id, DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, Consignment_No, Send_By, Total_Weight_In_KG, Subtotal, Discount_Rs, Discount_Percent, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount, C.Client_Id, C.Destination_Id, Destination_Name, FORMAT(Fuel_Surcharge, 2) AS Fuel_Surcharge, CL.GST_Within_State
 
 FROM tbl_consignments C
 
@@ -12,7 +12,7 @@ INNER JOIN tbl_destinations D ON C.Destination_Id = D.Destination_Id
 INNER JOIN tbl_clients CL ON CL.Client_Id = C.Client_Id 
 WHERE Date_Of_Submit BETWEEN (SELECT Date_From FROM tbl_invoices WHERE Invoice_Id=".$_GET['id'].") AND (SELECT Date_To FROM tbl_invoices WHERE Invoice_Id=".$_GET['id'].") AND C.Client_id = (SELECT Client_id FROM tbl_invoices WHERE Invoice_Id=".$_GET['id']." AND Branch_Id=".$_SESSION['buser'].") ORDER BY Date_Of_Submit ASC, Consignment_No ASC");
 
-$getTaxes = $db->ExecuteQuery("SELECT SGST, CGST, Service_Tax, SB_Tax, KKC_Tax FROM tbl_taxes");
+$getTaxes = $db->ExecuteQuery("SELECT IGST, SGST, CGST, Service_Tax, SB_Tax, KKC_Tax FROM tbl_taxes");
 
 $getInvoiceDate = $db->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Date_From, '%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To, '%Y-%m-%d') AS Date_To, DATE_FORMAT(Date_To, '%d-%m-%Y') AS Invoice_Date_To FROM tbl_invoices WHERE Invoice_Id=".$_GET['id']);
 
@@ -213,6 +213,15 @@ $(document).ready(function(){
                     <tr class="warning">
                     	<td colspan="12" align="right"><strong>Sub-Total</strong></td>
                         <td><input type="text" class="form-control input-sm" id="invoiceSubtotal" value="" readonly /></td>
+                    </tr>
+                    
+                    <tr class="warning">
+                    	<td colspan="12" align="right"><strong>IGST (<?php echo $getTaxes[1]['IGST']; ?>%)</strong></td>
+                        <td>
+                        	<input type="hidden" id="IGSTpercent" value="<?php echo $getTaxes[1]['IGST']; ?>" />
+                            <input type="hidden" id="GST_Within_State" value="<?php echo $getConsignmentsVal['GST_Within_State']; ?>" />
+                            <input type="text" class="form-control input-sm" id="igst" value="" readonly />
+                        </td>
                     </tr>
                     
                     <tr class="warning">

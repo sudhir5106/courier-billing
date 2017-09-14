@@ -15,6 +15,11 @@
     <script type="text/javascript" src="<?php echo PATH_JS_LIBRARIES; ?>/bootstrap-hover-dropdown.js"></script>
     <script type="text/javascript" src="<?php echo PATH_JS_LIBRARIES; ?>/jquery.validate.js"></script>
     <script type="text/javascript" src="<?php echo PATH_JS_LIBRARIES; ?>/additional-methods.js"></script> 
+    <script type="text/javascript">
+    $(window).load(function() {
+		$("#loader").hide('slow');
+	});
+	</script>
 </head>
 <body>
 

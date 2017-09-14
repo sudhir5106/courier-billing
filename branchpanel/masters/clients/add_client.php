@@ -135,6 +135,13 @@ $(document).ready(function(){
                 </div>
                 
                 <div class="form-group">
+                  <label class="control-label col-sm-3 mandatory" for="panNo">PAN No:</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control input-sm" id="panNo" name="panNo" placeholder="PAN No" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
                   <label class="control-label col-sm-3 mandatory" for="insurance">Insurance in (%):</label>
                   <div class="col-sm-3">
                     <input type="text" class="form-control input-sm" id="insurance" name="insurance" />

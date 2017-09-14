@@ -362,6 +362,7 @@ $(document).ready(function(){
 			formdata.append('contact_no', $("#contact_no").val());
 			formdata.append('withinState', $("#gstwithinstate").val());
 			formdata.append('gstin', $("#gstin").val());
+			formdata.append('panNo', $("#panNo").val());
 			formdata.append('insurance', $("#insurance").val());
 			formdata.append('fuelSurcharge', $("#fuelSurcharge").val());
 			formdata.append('email', $("#email").val());
@@ -412,6 +413,7 @@ $(document).ready(function(){
 			formdata.append('contact_no', $("#contact_no").val());
 			formdata.append('withinState', $("#gstwithinstate").val());
 			formdata.append('gstin', $("#gstin").val());
+			formdata.append('panNo', $("#panNo").val());
 			formdata.append('insurance', $("#insurance").val());
 			formdata.append('fuelSurcharge', $("#fuelSurcharge").val());
 			formdata.append('email', $("#email").val());
@@ -422,7 +424,7 @@ $(document).ready(function(){
 			   type: "POST",
 			   url: "client_curd.php",
 			   data:formdata,
-			   success: function(data){ alert(data);
+			   success: function(data){ //alert(data);
 				   x=data;
 				   if(x!=0)
 					{

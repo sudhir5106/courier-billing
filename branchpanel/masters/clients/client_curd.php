@@ -156,8 +156,8 @@ if($_POST['type']=="addClient")
 	
 	try
 	{	
-		$res=mysql_query("INSERT INTO tbl_clients (Joining_Date, Client_Code, Client_Name, Destination_Id, Address, Billing_Address, Contact_No, GST_Within_State, GSTIN_No, Insurance_Percent, Fuel_Surcharge, Email, Password, Branch_Id, Is_Active)
-VALUES(CURDATE(), ".$_POST['client_code'].", '".$_POST['client_name']."', ".$_POST['dest_id'].", '".$_POST['address'].", '".$_POST['billingAdd']."', ".$_POST['contact_no'].", '".$_POST['withinState'].", '".$_POST['gstin'].", '".$_POST['insurance']."', '".$_POST['fuelSurcharge']."', '".$_POST['email']."', '".$_POST['password']."', ".$_SESSION['buser'].",1)");
+		$res=mysql_query("INSERT INTO tbl_clients (Joining_Date, Client_Code, Client_Name, Destination_Id, Address, Billing_Address, Contact_No, GST_Within_State, GSTIN_No, PAN_No, Insurance_Percent, Fuel_Surcharge, Email, Password, Branch_Id, Is_Active)
+VALUES(CURDATE(), ".$_POST['client_code'].", '".$_POST['client_name']."', ".$_POST['dest_id'].", '".$_POST['address'].", '".$_POST['billingAdd']."', ".$_POST['contact_no'].", '".$_POST['withinState'].", '".$_POST['gstin']."', '".$_POST{'panNo'}."', '".$_POST['insurance']."', '".$_POST['fuelSurcharge']."', '".$_POST['email']."', '".$_POST['password']."', ".$_SESSION['buser'].",1)");
 
 		if(!$res)
 		{
@@ -186,9 +186,7 @@ if($_POST['type']=="editClient")
 	
 	try
 	{	
-		$res=mysql_query("UPDATE tbl_clients SET Client_Code= '".$_POST['client_code']."', Client_Name= '".$_POST['client_name']."', Destination_Id=".$_POST['dest_id'].", Address='".$_POST['address']."', Billing_Address='".$_POST['billingAdd']."', Contact_No='".$_POST['contact_no']."', GST_Within_State=".$_POST['withinState'].", GSTIN_No='".$_POST['gstin']."', Insurance_Percent=".$_POST['insurance'].", Fuel_Surcharge=".$_POST['fuelSurcharge'].", Email='".$_POST['email']."', Password= '".$_POST['password']."' WHERE Client_Id=".$_POST['client_id']);
-		
-		echo "UPDATE tbl_clients SET Client_Code= '".$_POST['client_code']."', Client_Name= '".$_POST['client_name']."', Destination_Id=".$_POST['dest_id'].", Address='".$_POST['address']."', Billing_Address='".$_POST['billingAdd']."', Contact_No='".$_POST['contact_no']."', GST_Within_State=".$_POST['withinState'].", GSTIN_No='".$_POST['gstin']."', Insurance_Percent=".$_POST['insurance'].", Fuel_Surcharge=".$_POST['fuelSurcharge'].", Email='".$_POST['email']."', Password= '".$_POST['password']."' WHERE Client_Id=".$_POST['client_id'];
+		$res=mysql_query("UPDATE tbl_clients SET Client_Code= '".$_POST['client_code']."', Client_Name= '".$_POST['client_name']."', Destination_Id=".$_POST['dest_id'].", Address='".$_POST['address']."', Billing_Address='".$_POST['billingAdd']."', Contact_No='".$_POST['contact_no']."', GST_Within_State=".$_POST['withinState'].", GSTIN_No='".$_POST['gstin']."', PAN_No='".$_POST['panNo']."', Insurance_Percent=".$_POST['insurance'].", Fuel_Surcharge=".$_POST['fuelSurcharge'].", Email='".$_POST['email']."', Password= '".$_POST['password']."' WHERE Client_Id=".$_POST['client_id']);
 		
 		if(!$res)
 		{

@@ -567,7 +567,7 @@ if($_POST['type']=="generateInvoice")
 	else{
 		
 		
-		$cust=$rateClass->ExecuteQuery("SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, CO.Consignment_No, CO.Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name, B.Branch_Code, B.Branch_Name, B.Franchise_Name, B.Franchise_Logo, B.Address, DN.Destination_Name AS City, B.PAN_No, B.GSTIN, B.Service_Tax_No, C.Client_Name, C.Address AS Client_Address, C.Billing_Address AS Billing_Address, C.GST_Within_State, C.GSTIN_No, C.Fuel_Surcharge, C.Email 
+		$cust=$rateClass->ExecuteQuery("SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, CO.Consignment_No, CO.Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name, B.Branch_Code, B.Branch_Name, B.Franchise_Name, B.Franchise_Logo, B.Address, DN.Destination_Name AS City, B.PAN_No, B.GSTIN, B.Service_Tax_No, C.Client_Name, C.Address AS Client_Address, C.Billing_Address AS Billing_Address, C.GST_Within_State, C.GSTIN_No, C.PAN_No AS Client_PAN_No, C.Fuel_Surcharge, C.Email 
 	
 		FROM tbl_consignments CO 
 		
@@ -578,7 +578,7 @@ if($_POST['type']=="generateInvoice")
 	WHERE CO.Client_Id=".$_POST['client_id']." AND CO.Date_Of_Submit BETWEEN '".$fromDate."' AND '".$toDate."' ORDER BY CO.Date_Of_Submit ASC, Consignment_No ASC");
 	
 		
-		$tax=$rateClass->ExecuteQuery("SELECT SGST, CGST, Service_Tax, SB_Tax, KKC_Tax FROM tbl_taxes");
+		$tax=$rateClass->ExecuteQuery("SELECT IGST, SGST, CGST, Service_Tax, SB_Tax, KKC_Tax FROM tbl_taxes");
 		
 		$sum = '';
 		foreach ($cust as $val)
@@ -589,13 +589,18 @@ if($_POST['type']=="generateInvoice")
 		$fuelsurcharge = sprintf('%0.2f',($sum*$cust[1]['Fuel_Surcharge'])/100);
 		$subtotal = sprintf('%0.2f', ($sum + $fuelsurcharge));
 		
-		$sgst = sprintf('%0.2f',($subtotal*$tax[1]['SGST'])/100);
-		$cgst = sprintf('%0.2f',($subtotal*$tax[1]['CGST'])/100);
-		/*$serviceTax = sprintf('%0.2f',($subtotal*$tax[1]['Service_Tax'])/100);
-		$SB_Tax = sprintf('%0.2f',($subtotal*$tax[1]['SB_Tax'])/100);
-		$KKC_Tax = sprintf('%0.2f',($subtotal*$tax[1]['KKC_Tax'])/100);*/
-		
-		$Final_Total_Amt = sprintf('%0.2f',($subtotal + $sgst + $cgst));
+		if($cust[1]['GST_Within_State']=="0"){
+			$igst = sprintf('%0.2f',0);
+			$sgst = sprintf('%0.2f',($subtotal*$tax[1]['SGST'])/100);
+			$cgst = sprintf('%0.2f',($subtotal*$tax[1]['CGST'])/100);
+		}
+		else{
+			$igst = sprintf('%0.2f',($subtotal*$tax[1]['IGST'])/100);
+			$sgst = sprintf('%0.2f',0);
+			$cgst = sprintf('%0.2f',0);
+		}
+				
+		$Final_Total_Amt = sprintf('%0.2f',($subtotal + $igst + $sgst + $cgst));
 		
 		// Query to get the Max Invoice No
 		$invno=$rateClass->ExecuteQuery("SELECT Invoice_No FROM tbl_invoices WHERE Invoice_Id= (SELECT MAX(Invoice_Id) FROM tbl_invoices WHERE Branch_Id = ".$_SESSION['buser'].")");
@@ -611,8 +616,8 @@ if($_POST['type']=="generateInvoice")
 		}
 		
 		//Insert Invoice Details
-		$insertInvoice=mysql_query("INSERT INTO tbl_invoices (Invoice_Date, Invoice_No, Date_From, Date_To, Invoice_Amount, Fuel_Surcharge, Subtotal, SGST_Tax, CGST_Tax, Final_Total_Amt, Client_Id, Branch_Id)  
-	VALUES(NOW(), '".$cust[1]['Branch_Code']."-".$invoiceNo."', '".$fromDate."', '".$toDate."', ".$sum.", ".$fuelsurcharge.",".$subtotal.",".$sgst.",".$cgst.",".$Final_Total_Amt.",".$_POST['client_id'].",".$_SESSION['buser'].")");
+		$insertInvoice=mysql_query("INSERT INTO tbl_invoices (Invoice_Date, Invoice_No, Date_From, Date_To, Invoice_Amount, Fuel_Surcharge, Subtotal, IGST_Tax, SGST_Tax, CGST_Tax, Final_Total_Amt, Client_Id, Branch_Id)  
+	VALUES(NOW(), '".$cust[1]['Branch_Code']."-".$invoiceNo."', '".$fromDate."', '".$toDate."', ".$sum.", ".$fuelsurcharge.",".$subtotal.",".$igst.",".$sgst.",".$cgst.",".$Final_Total_Amt.",".$_POST['client_id'].",".$_SESSION['buser'].")");
 	
 		$last_Id=mysql_insert_id();
 		$num = round($Final_Total_Amt);
@@ -773,12 +778,13 @@ if($_POST['type']=="generateInvoice")
 						'.$cust[1]['Client_Name'].'
 						<br/>'.$cust[1]['Billing_Address'].', India<br>
 						GSTIN-'.$cust[1]['GSTIN_No'].'<br>
-						PAN NO-
+						PAN NO-'.$cust[1]['Client_PAN_No'].'
 					</td>
 					<td>
 						<strong>BILL NO. #'.$cust[1]['Branch_Code'].'-'.$invoiceNo.'</strong><br/>
 						<strong>BILL DATE:</strong> '.$_POST['to_date'].'<br>
-						<strong>BILL PERIOD:</strong> '.$_POST['from_date'].' To '.$_POST['to_date'].'
+						<strong>BILL PERIOD:</strong> '.$_POST['from_date'].' To '.$_POST['to_date'].'<br>
+						<strong>Description of Service:</strong> Courier Service
 					</td>
 				   </tr>
 				   
@@ -839,6 +845,11 @@ if($_POST['type']=="generateInvoice")
 								<tr>
 									<td width="400" colspan="7" align="right" style="padding-right:10px">Sub-Total</td>
 									<td width="65" align="center">'.$subtotal.'/-</td>
+								</tr>
+								
+								<tr>
+									<td width="400" colspan="7" align="right" style="padding-right:10px">IGST (18%)</td>
+									<td width="65" align="center">'.$igst.'/-</td>
 								</tr>
 								
 								<tr>
@@ -1099,8 +1110,8 @@ if($_POST['type']=="update")
 		///*******************************************************
 		/// Update the invoice table /////////////////////////////
 		///*******************************************************
-		$tableField=array('Invoice_Amount','Fuel_Surcharge','Subtotal','SGST_Tax','CGST_Tax','Service_Tax','SB_Tax','KK_Tax', 'Final_Total_Amt');
-		$tableValue=array($_POST['invoiceAmt'],$_POST['fuelsurcharge'],$_POST['invoiceSubtotal'],$_POST['sgst'],$_POST['cgst'],$_POST['serviceTax'],$_POST['sbTax'],$_POST['kkTax'],$_POST['invoiceFinalAmt']);
+		$tableField=array('Invoice_Amount','Fuel_Surcharge','Subtotal','IGST_Tax','SGST_Tax','CGST_Tax','Service_Tax','SB_Tax','KK_Tax', 'Final_Total_Amt');
+		$tableValue=array($_POST['invoiceAmt'],$_POST['fuelsurcharge'],$_POST['invoiceSubtotal'],$_POST['igst'],$_POST['sgst'],$_POST['cgst'],$_POST['serviceTax'],$_POST['sbTax'],$_POST['kkTax'],$_POST['invoiceFinalAmt']);
 		$condition=" Invoice_Id='".$_POST['invoiceId']."'";			
 		$res=$rateClass->updateValue("tbl_invoices",$tableField,$tableValue,$condition);
 		
@@ -1233,7 +1244,7 @@ if($_POST['type']=="update")
 		$num1=convertNum($num);
 		
 		// Get the data from invoice table
-		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GST_Within_State FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GST_Within_State, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address, (SELECT Billing_Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Billing_Address 
+		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GST_Within_State FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GST_Within_State, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT PAN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_PAN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address, (SELECT Billing_Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Billing_Address 
 	
 		FROM tbl_invoices I
 		
@@ -1441,7 +1452,7 @@ abc;
 				</td>
 			 </tr>
 			 
-			 <tr><td colspan="2"><hr></td></tr>			 
+			 <tr><td colspan="2"><hr></td></tr>
 			 		  
 			 <tr>
 			 	<td colspan="2"><strong>PAN No.</strong>:- '.$invoiceInfo[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$invoiceInfo[1]['GSTIN'].', <strong>Category</strong>:- Courier Service </td>				
@@ -1460,12 +1471,13 @@ abc;
 					'.$invoiceInfo[1]['Client_Name'].'
 					<br/>'.$invoiceInfo[1]['Billing_Address'].', India<br>
 					GSTIN-'.$invoiceInfo[1]['GSTIN_No'].'<br>
-					PAN NO-
+					PAN NO-'.$invoiceInfo[1]['Client_PAN_No'].'
 				</td>
                 <td>
 					<strong>BILL NO. #'.$invoiceInfo[1]['Invoice_No'].'</strong><br>
 				 	<strong>BILL DATE:</strong> '.$invoiceInfo[1]['Date_To'].'<br>
-					<strong>BILL PERIOD:</strong> '.$invoiceInfo[1]['Date_From'].' To '.$invoiceInfo[1]['Date_To'].'
+					<strong>BILL PERIOD:</strong> '.$invoiceInfo[1]['Date_From'].' To '.$invoiceInfo[1]['Date_To'].'<br>
+					<strong>Description of Service:</strong> Courier Service
 				</td>
 			  </tr>
 			 			  
@@ -1499,6 +1511,7 @@ abc;
 					$invoiceAmt = $_POST['invoiceAmt'];
 					$fuelsurcharge = $_POST['fuelsurcharge'];
 					$invoiceSubtotal = $_POST['invoiceSubtotal'];
+					$igst = $_POST['igst'];
 					$sgst = $_POST['sgst'];
 					$cgst = $_POST['cgst'];
 					$serviceTax = $_POST['serviceTax'];
@@ -1541,7 +1554,12 @@ abc;
 								<td width="65" align="center">'.$invoiceSubtotal.'/-</td>	
 							</tr>
 							
-							<tr >
+							<tr>
+								<td width="400" colspan="7" align="right" style="padding-right:10px">IGST (18%)</td>
+								<td width="65" align="center">'.$igst.'/-</td>
+							</tr>
+							
+							<tr>
 								<td width="400" colspan="7" align="right" style="padding-right:10px">SGST (9%)</td>
 								<td width="65" align="center">'.$sgst.'/-</td>
 							</tr>
@@ -1613,7 +1631,7 @@ abc;
 
 
 ///*******************************************************
-/// preview of the Invoice ///////////////////////////////////
+/// preview of the Invoice ///////////////////////////////
 ///*******************************************************
 if($_POST['type']=="preview")
 {
@@ -1747,7 +1765,7 @@ if($_POST['type']=="preview")
 		$num1=convertNum($num);
 		
 		// Get the data from invoice table
-		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address 
+		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address, (SELECT Billing_Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Billing_Address, (SELECT PAN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_PAN_No  
 	
 		FROM tbl_invoices I
 		
@@ -1967,13 +1985,19 @@ if($_POST['type']=="preview")
 					<strong>To,</strong>
 					<br/>
 					'.$invoiceInfo[1]['Client_Name'].'
-					<br/>'.$invoiceInfo[1]['Client_Address'].', India <br>
-					GSTIN-'.$invoiceInfo[1]['GSTIN_No'].'
+					<br/>'.$invoiceInfo[1]['Client_Address'].', India <br><br>
+					
+					<strong>Billing Address:</strong><br>
+					'.$invoiceInfo[1]['Client_Name'].'
+					<br/>'.$invoiceInfo[1]['Billing_Address'].', India<br>
+					GSTIN-'.$invoiceInfo[1]['GSTIN_No'].'<br>
+					PAN NO-'.$invoiceInfo[1]['Client_PAN_No'].'
 				</td>
                 <td>
 					<strong>BILL NO. #'.$invoiceInfo[1]['Invoice_No'].'</strong><br>
 				 	<strong>BILL DATE:</strong> '.$invoiceInfo[1]['Date_To'].'<br>
-					<strong>BILL PERIOD:</strong> '.$invoiceInfo[1]['Date_From'].' To '.$invoiceInfo[1]['Date_To'].'
+					<strong>BILL PERIOD:</strong> '.$invoiceInfo[1]['Date_From'].' To '.$invoiceInfo[1]['Date_To'].'<br>
+					<strong>Description of Service:</strong> Courier Service
 				</td>
 			  </tr>
 			 			  
@@ -2007,6 +2031,7 @@ if($_POST['type']=="preview")
 					$invoiceAmt = $_POST['invoiceAmt'];
 					$fuelsurcharge = $_POST['fuelsurcharge'];
 					$invoiceSubtotal = $_POST['invoiceSubtotal'];
+					$igst = $_POST['igst'];
 					$sgst = $_POST['sgst'];
 					$cgst = $_POST['cgst'];
 					$serviceTax = $_POST['serviceTax'];
@@ -2049,7 +2074,12 @@ if($_POST['type']=="preview")
 								<td width="65" align="center">'.$invoiceSubtotal.'/-</td>	
 							</tr>
 							
-							<tr >
+							<tr>
+								<td width="400" colspan="7" align="right" style="padding-right:10px">IGST (18%)</td>
+								<td width="65" align="center">'.$igst.'/-</td>
+							</tr>
+							
+							<tr>
 								<td width="400" colspan="7" align="right" style="padding-right:10px">SGST (9%)</td>
 								<td width="65" align="center">'.$sgst.'/-</td>
 							</tr>
