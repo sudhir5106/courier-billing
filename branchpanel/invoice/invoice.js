@@ -766,7 +766,7 @@ $(document).ready(function(){
 		
 		else{
 			
-			$(this).parents().children('td').css({'background-color':'none', 'color':'#000'})
+			$(this).parents().children('td').css({'background-color':'#fff', 'color':'#555'})
 			
 			// remove all values from array
 			checkedCons = jQuery.grep(checkedCons, function( a ) {
