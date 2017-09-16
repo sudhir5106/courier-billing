@@ -763,7 +763,7 @@ if($_POST['type']=="generateInvoice")
 					 </tr>
 				 <tr><td colspan="2"><hr></td></tr>
 				 <tr>
-					   <td colspan="2"><strong>PAN No.</strong>:- '.$cust[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$cust[1]['GSTIN'].', <strong>HSN/SAC</strong>:- 996812</td>
+					   <td colspan="2"><strong>PAN No.</strong>:- '.$cust[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$cust[1]['GSTIN'].', <strong>HSN/SAC CODE</strong>: 996812</td>
 				 </tr>
 				 
 				 <tr><td colspan="2"><hr></td></tr>
@@ -1455,7 +1455,7 @@ abc;
 			 <tr><td colspan="2"><hr></td></tr>
 			 		  
 			 <tr>
-			 	<td colspan="2"><strong>PAN No.</strong>:- '.$invoiceInfo[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$invoiceInfo[1]['GSTIN'].', <strong>Category</strong>:- Courier Service </td>				
+			 	<td colspan="2"><strong>PAN No.</strong>:- '.$invoiceInfo[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$invoiceInfo[1]['GSTIN'].', <strong>HSN/SAC CODE</strong>: 996812</td>				
 			 </tr>
 			 
 			 <tr><td colspan="2"><hr></td></tr>	
@@ -1975,7 +1975,7 @@ if($_POST['type']=="preview")
 			 <tr><td colspan="2"><hr></td></tr>			 
 			 		  
 			 <tr>
-			 	<td colspan="2"><strong>PAN No.</strong>:- '.$invoiceInfo[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$invoiceInfo[1]['GSTIN'].', <strong>HSN/SAC</strong>:- 996812</td>				
+			 	<td colspan="2"><strong>PAN No.</strong>:- '.$invoiceInfo[1]['PAN_No'].', <strong>GSTIN</strong>:- '.$invoiceInfo[1]['GSTIN'].', <strong>HSN/SAC CODE</strong>: 996812</td>				
 			 </tr>
 			 
 			 <tr><td colspan="2"><hr></td></tr>	
