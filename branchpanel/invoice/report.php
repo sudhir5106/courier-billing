@@ -41,7 +41,7 @@ $str = "";
 		}*/
    }//eof of main if condition
 
-	$invoice=$db->ExecuteQuery("SELECT Invoice_Id, Invoice_No, DATE_FORMAT(Date_From,'%d-%m-%Y') AS 'Date_From', DATE_FORMAT(Date_To,'%d-%m-%Y') AS 'Date_To', Final_Total_Amt, Client_Name, Client_Code 
+	$invoice=$db->ExecuteQuery("SELECT Invoice_Id, Invoice_No, DATE_FORMAT(Date_From,'%d-%m-%Y') AS 'Date_From', DATE_FORMAT(Date_To,'%d-%m-%Y') AS 'Date_To', Invoice_Amount, I.Fuel_Surcharge, Subtotal, IGST_Tax, SGST_Tax, CGST_Tax, Service_Tax, SB_Tax, KK_Tax, Final_Total_Amt, Client_Name, Client_Code 
 	
 	FROM tbl_invoices I 
 	
@@ -93,10 +93,18 @@ $str = "";
 		});
 	});
 </script>
+<style type="text/css" media="print">
+  @page { size: portrait; }
+  @media print
+   {
+      #admglobal_container, nav, .pageTitle, .srchBox {display:none;}
+   }
+</style>
 
 <div class="pageTitle">
 	<div class="ef_header_tools pull-right">
         <a class="btn btn-success btn-sm" href="index.php"><i class="glyphicon glyphicon-plus"></i> <strong>Generate Invoice</strong></a>
+        <button onclick="window.print()" type="button" class="btn btn-info btn-sm" id="print" name="print"> <span class="glyphicon glyphicon-print"></span> Print </button>
         <!--<a class="btn btn-success btn-sm" href="<?php echo BRANCH_MASTERS_LINK_CONTROL ?>/clients/report.php"><i class="glyphicon glyphicon-list"></i> <strong>Clients List</strong></a>-->
     </div>
 	<h1 class="pull-left">Invoice Report</h1>
@@ -138,11 +146,17 @@ $str = "";
           <thead>
             <tr class="success">
               <th>Sno.</th>
-              <th>Client Name &amp; Code</th>
+              <th width="250">Client Name &amp; Code</th>
               <th>Invoice No</th>
-              <th>Date From</th>             
-              <th>Date To</th>
               <th>Amount</th>
+              <th>FUEL</th>
+              <th>Subtotal</th>
+              <th>SGST</th>
+              <th>CGST</th>
+              <th>IGST</th>
+              <th>Amount</th>
+              <th>Date From</th>             
+              <th>Date To</th>              
               <th>Invoice</th>
               <th>Action</th>
             </tr>
@@ -157,14 +171,21 @@ $str = "";
               <td ><?php echo $i;?></td>
               <td><?php echo $val['Client_Name'].'-'.$val['Client_Code'];?></td>
               <td><a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank"><?php echo $val['Invoice_No'];?></a></td>
+              <td><?php echo $val['Invoice_Amount'];?></td>
+              <td><?php echo $val['Fuel_Surcharge'];?></td>
+              <td><?php echo $val['Subtotal'];?></td>
+              <td><?php echo $val['SGST_Tax'];?></td>
+              <td><?php echo $val['CGST_Tax'];?></td>
+              <td><?php echo $val['IGST_Tax'];?></td>
+              <td><?php echo round($val['Final_Total_Amt']);?></td>
               <td><?php echo $val['Date_From'];?></td>              
               <td><?php echo $val['Date_To'];?></td>
-              <td><?php echo round($val['Final_Total_Amt']);?></td>
+              
               <td><a href="<?php echo PATH_PDF_LINK."/invoice/".$val['Invoice_No'].".pdf"?>" target="_blank"><i class="fa fa-file-pdf-o danger"></i></a></td>
               <td>
               
                 <a href="edit-invoice.php?id=<?php echo $val['Invoice_Id']; ?>" class="btn btn-sm btn-success">Edit</a>
-                <button type="button" class="btn btn-info btn-sm resend" id="<?php echo $val['Invoice_Id']; ?>" name="resend">Resend Invoice</button></td>
+                <!--<button type="button" class="btn btn-info btn-sm resend" id="<?php echo $val['Invoice_Id']; ?>" name="resend">Resend Invoice</button>--></td>
             </tr>
             <?php $i++;} 
 			}
