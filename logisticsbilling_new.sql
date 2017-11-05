@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 14, 2017 at 04:20 PM
+-- Generation Time: Nov 05, 2017 at 09:58 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -343,7 +343,8 @@ INSERT INTO `tbl_clients` (`Client_Id`, `Joining_Date`, `Client_Code`, `Client_N
 (221, '2017-07-19', 12, 'MUTHOOT FINANCE LTD  ( RISHALI )', 154, 'krishna takies raod rishali', '', '9999988888', 0, '', '', 0, 0, 'bhilai@muthootfinance.com', '@abcd1234', 8, 1),
 (222, '2017-07-19', 13, 'K SALES', 154, 'ethiraj tower shop no 214 sastri nagar', '', '9997774444', 0, '', '', 0, 0, 'bhilai@ksales.com', '@abcd1234', 8, 1),
 (223, '2017-07-21', 114, 'NSB CAPITAL MARKET(P) LTD', 1053, '2nd Floor Nagdev Plaza Katchery Chowk Raipur', '', '9852240001', 0, '', '', 2, 20, 'nsbcapital2017@gmail.com', '@xyz321', 1, 1),
-(225, '2017-08-12', 115, 'KOTAK MAHINDRA BANK (TFE)', 1053, '2ND FLOOR, CITY PLAZA,', '2ND FLOOR, CITY PLAZA,', '1111111111', 0, '22AAACK4409J1ZU', 'AEYPV4887J', 0, 20, 'tfe@kotak.com', '@abcd1234', 1, 1);
+(225, '2017-08-12', 115, 'KOTAK MAHINDRA BANK (TFE)', 1053, '2ND FLOOR, CITY PLAZA,', '2ND FLOOR, CITY PLAZA,', '1111111111', 0, '22AAACK4409J1ZU', 'AEYPV4887J', 0, 20, 'tfe@kotak.com', '@abcd1234', 1, 1),
+(226, '2010-05-17', 116, 'suncros', 1053, 'adfa sdfasd fasdf `', 'adfa sdfasd fasdf `', '9826396462', 1, 'asdfer24', 'asdf23423', 1, 1, 's@gmail.com', '123456', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -38492,7 +38493,8 @@ INSERT INTO `tbl_invoices` (`Invoice_Id`, `Invoice_Date`, `Invoice_No`, `Date_Fr
 (605, '2017-08-16', '1-00000344', '2017-07-01', '2017-07-31', 510, 0, 510, 0, 45.9, 45.9, 0, 0, 0, 602, 25, NULL, 1),
 (606, '2017-09-13', '1-00000345', '2017-06-01', '2017-06-30', 14440, 0, 14440, 0, 0, 0, 2021.6, 72.2, 72.2, 16606, 15, NULL, 1),
 (607, '2017-09-13', '1-00000346', '2017-07-01', '2017-07-31', 14250, 0, 14250, 0, 1282.5, 1282.5, 0, 0, 0, 16815, 15, NULL, 1),
-(608, '2017-09-13', '1-00000347', '2017-08-01', '2017-08-31', 1290, 0, 1290, 0, 116.1, 116.1, 0, 0, 0, 1522.2, 15, NULL, 1);
+(608, '2017-09-13', '1-00000347', '2017-08-01', '2017-08-31', 1290, 0, 1290, 0, 116.1, 116.1, 0, 0, 0, 1522.2, 15, NULL, 1),
+(612, '2017-10-18', '1-00000348', '2017-09-01', '2017-09-30', 180, 36, 216, 0, 19.44, 19.44, 0, 0, 0, 255, 9, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -44060,7 +44062,7 @@ ALTER TABLE `tbl_branchs`
 -- AUTO_INCREMENT for table `tbl_clients`
 --
 ALTER TABLE `tbl_clients`
-  MODIFY `Client_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=226;
+  MODIFY `Client_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
 --
 -- AUTO_INCREMENT for table `tbl_consignments`
 --
@@ -44075,7 +44077,7 @@ ALTER TABLE `tbl_destinations`
 -- AUTO_INCREMENT for table `tbl_invoices`
 --
 ALTER TABLE `tbl_invoices`
-  MODIFY `Invoice_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=609;
+  MODIFY `Invoice_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=613;
 --
 -- AUTO_INCREMENT for table `tbl_operators`
 --
