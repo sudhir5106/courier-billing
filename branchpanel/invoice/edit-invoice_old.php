@@ -18,7 +18,7 @@ $getInvoiceDate = $db->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Date_From, '
 
 ?>
 
-<script type="text/javascript" src="invoice.js"></script>
+<script type="text/javascript" src="invoice.js" ></script>
 
 <script>
 	
@@ -186,7 +186,7 @@ $(document).ready(function(){
 		                    </div>
 		                </td>                
 		                
-		                <td><input type="text" class="form-control input-sm total_amt" id="total_amt<?php echo $getConsignmentsVal['Consignment_Id']; ?>" name="total_amt<?php echo $getConsignmentsVal['Consignment_Id']; ?>" value="<?php echo $getConsignmentsVal['Total_Amount']; //echo  sprintf('%0.2f',$getConsignmentsVal['Total_Amount']); ?>" readonly /></td>
+		                <td><input type="text" class="form-control input-sm total_amt" id="total_amt<?php echo $getConsignmentsVal['Consignment_Id']; ?>" name="total_amt<?php echo $getConsignmentsVal['Consignment_Id']; ?>" value="<?php echo sprintf('%0.2f',$getConsignmentsVal['Total_Amount']); ?>" readonly /></td>
 		                
 		                <td><input type="text" class="form-control input-sm insrncChrgs" id="insrncChrgs<?php echo $getConsignmentsVal['Consignment_Id']; ?>" name="insrncChrgs<?php echo $getConsignmentsVal['Consignment_Id']; ?>" value="<?php echo sprintf('%0.2f', $getConsignmentsVal['Insurance_Other_Charges']); ?>" readonly /></td>
 		                

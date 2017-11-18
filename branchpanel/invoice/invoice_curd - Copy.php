@@ -598,65 +598,119 @@ if($_POST['type']=="preview")
 			$checkedCons = 0;
 			}
 		
-//////////////////////////////
-// Convert Amount in Words
-//////////////////////////////		
-//$num = round($_POST['invoiceFinalAmt']);
- $num = $_POST['invoiceFinalAmt'];
-  $number = number_format($num, 2, '.', '');
- $number=explode('.',$number);
- $no = $number[0];
-$point=$number[1];
-//$point = round($point - $no, 2) * 100;
-
-
-$hundred = null;
-$digits_1 = strlen($no);
-$i = 0;
-$str = array();
-$words = array('0' => '', '1' => 'one', '2' => 'two',
-'3' => 'three', '4' => 'four', '5' => 'five', '6' => 'six',
-'7' => 'seven', '8' => 'eight', '9' => 'nine',
-'10' => 'ten', '11' => 'eleven', '12' => 'twelve',
-'13' => 'thirteen', '14' => 'fourteen',
-'15' => 'fifteen', '16' => 'sixteen', '17' => 'seventeen',
-'18' => 'eighteen', '19' =>'nineteen', '20' => 'twenty',
-'30' => 'thirty', '40' => 'forty', '50' => 'fifty',
-'60' => 'sixty', '70' => 'seventy',
-'80' => 'eighty', '90' => 'ninety');
-$digits = array('', 'hundred', 'thousand', 'lakh', 'crore');
-while ($i < $digits_1) {
-$divider = ($i == 2) ? 10 : 100;
-$number = floor($no % $divider);
-$no = floor($no / $divider);
-$i += ($divider == 10) ? 1 : 2;
-if ($number) {
-$plural = (($counter = count($str)) && $number > 9) ? 's' : null;
-$hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
-$str [] = ($number < 21) ? $words[$number] .
-" " . $digits[$counter] . $plural . " " . $hundred
-:
-$words[floor($number / 10) * 10]
-. " " . $words[$number % 10] . " "
-. $digits[$counter] . $plural . " " . $hundred;
-} else $str[] = null;
-}
-$str = array_reverse($str);
-$result = implode('', $str);
-    $str_n="";
-    $str_n.=$result . "Rupees  " ;
-if($point>0)
- {
-$points = ($point) ?
-"." . $words[$point / 10] . " " . 
-$words[$point = $point % 10] : '';
- $str_n.=$points . " Paise";
-}
-///////////////////////////////////////////////////////////////////******************//////////////////
-
-
-
-
+		//////////////////////////////
+		// Convert Amount in Words
+		//////////////////////////////		
+		//$num = round($_POST['invoiceFinalAmt']);
+		$num = $_POST['invoiceFinalAmt'];
+				
+		$ones = array(
+		 "",
+		 " ONE",
+		 " TWO",
+		 " THREE",
+		 " FOUR",
+		 " FIVE",
+		 " SIX",
+		 " SEVEN",
+		 " EIGHT",
+		 " NINE",
+		 " TEN",
+		 " ELEVEN",
+		 " TWELVE",
+		 " THIRTEEN",
+		 " FOURTEEN",
+		 " FIFTEEN",
+		 " SIXTEEN",
+		 " SEVENTEEN",
+		 " EIGHTEEN",
+		 " NINETEEN"
+		);
+	 
+		$tens = array(
+		 "",
+		 "",
+		 " TWENTY",
+		 " THIRTY",
+		 " FORTY",
+		 " FIFTY",
+		 " SISTY",
+		 " SEVENTY",
+		 " EIGHTY",
+		 " NINETY"
+		);
+	 
+		$triplets = array(
+		 "",
+		 " THOUSAND",
+		 " MILLION",
+		 " BILLION",
+		 " TRILLION",
+		 " QUADRILLION",
+		 " QUINTILLION",
+		 " SEXTILLION",
+		 " SEPTILLION",
+		 " OCTILLION",
+		 " NONILLION"
+		);
+	 
+		//recursive fn, converts three digits per pass
+		function convertTri($num, $tri) {
+			
+		  global $ones, $tens, $triplets;
+		 
+		  // chunk the number, ...rxyy
+		  $r = (int) ($num / 1000);
+		  $x = ($num / 100) % 10;
+		  $y = $num % 100;
+		 
+		  // init the output string
+		  $str = "";
+		 
+		  // do hundreds
+		  if ($x > 0)
+		   $str = $ones[$x] . " HUNDRED";
+		 
+		  // do ones and tens
+		  if ($y < 20)
+		   $str .= $ones[$y];
+		  else
+		   $str .= $tens[(int) ($y / 10)] . $ones[$y % 10];
+		 
+		  // add triplet modifier only if there
+		  // is some output to be modified...
+		  if ($str != "")
+		   $str .= $triplets[$tri];
+		 
+		  // continue recursing?
+		  if ($r > 0)
+		   return convertTri($r, $tri+1).$str;
+		  else
+		   return $str;
+		}//eof function
+		 
+		// returns the number as an anglicized string
+		function convertNum($num) {
+		 $num = (int) $num;    // make sure it's an integer
+		 
+		 if ($num < 0)
+		  return "negative".convertTri(-$num, 0);
+		 
+		 if ($num == 0)
+			return "zero";
+			return convertTri($num, 0);
+		}//eof convertNum function
+		 
+		 // Returns an integer in -10^9 .. 10^9
+		 // with log distribution
+		function makeLogRand() {
+		  $sign = mt_rand(0,1)*2 - 1;
+		  $val = randThousand() * 1000000 + randThousand() * 1000 + randThousand();
+		  $scale = mt_rand(-9,0);
+		  return $sign * (int) ($val * pow(10.0, $scale));
+		}// eof makeLogRand function
+		 
+		$num1=convertNum($num);
 		
 		// Get the data from invoice table
 		$invoiceInfo=$rateClass->ExecuteQuery("SELECT Invoice_No, DATE_FORMAT(Invoice_Date,'%d-%m-%Y') AS Invoice_Date, DATE_FORMAT(Date_From,'%d-%m-%Y') AS Date_From, DATE_FORMAT(Date_To,'%d-%m-%Y') AS Date_To, Branch_Name, Franchise_Name, Franchise_Logo, B.Address AS Branch_Address, D.Destination_Name AS City, GSTIN, Service_Tax_No, PAN_No, (SELECT Client_Name FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Name, (SELECT GSTIN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS GSTIN_No, (SELECT Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_Address, (SELECT Billing_Address FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Billing_Address, (SELECT PAN_No FROM tbl_clients WHERE Client_Id=".$_POST['client_id'].") AS Client_PAN_No  
@@ -825,7 +879,7 @@ $words[$point = $point % 10] : '';
 							
 				   
 			  </table>
-			  <div><strong>In Words :</strong> '.$str_n.'</div>
+			  <div><strong>In Words :</strong> '.$num1.'</div>
               <div style="padding-top:50px;">Authorized Signatory<br><br>'.$invoiceInfo[1]['Branch_Name'].'</div>			  
 			  
 			</div>  
@@ -995,7 +1049,7 @@ $words[$point = $point % 10] : '';
 							
 				   
 			  </table>
-			  <div><strong>In Words :</strong> '.$str_n. '</div>
+			  <div><strong>In Words :</strong> '.$num1.'</div>
 			  <div style="padding-top:50px; text-decoration:underline;">TERMS OF PAYMENT</div>
 				  <ul>
 				  	<li>Payment should be made to Authorised Officer Only.</li>

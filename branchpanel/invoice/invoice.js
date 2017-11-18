@@ -267,7 +267,7 @@ $(document).ready(function(){
 			   type: "POST",
 			   url: "invoice_curd.php",
 			   data:{type:"generateInvoice",from_date: $('#from_date').val(),to_date:$('#to_date').val(),client_id:$('#client_id').val()},
-			   success: function(data){ //alert(data);
+			   success: function(data){ alert(data);
 				  x=data;
 				  if(x!=0)
 				  {
@@ -672,7 +672,8 @@ $(document).ready(function(){
 			$("#kkTax").val(kkTax.toFixed(2));
 			
 			var invoiceFinalAmt = parseFloat(invoicesubtotal + igst + sgst + cgst + serviceTax + sbTax + kkTax);
-			$("#invoiceFinalAmt").val(Math.round(parseFloat(invoiceFinalAmt)).toFixed(2));
+			//$("#invoiceFinalAmt").val(Math.round(parseFloat(invoiceFinalAmt)).toFixed(2));
+			$("#invoiceFinalAmt").val(parseFloat(invoiceFinalAmt).toFixed(2));
 		}
 		else{
 
@@ -970,6 +971,7 @@ $(document).ready(function(){
 	// click function for invoice preview button
 	/////////////////////////////////////////////	
 	$(document).on('click', '#preview', function() {
+		//alert("hello");
 		
 		$("#loader").show();
 		
