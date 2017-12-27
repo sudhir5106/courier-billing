@@ -138,3 +138,7 @@ a .danger{color:#ff0000;}
 .consignmentBlk{padding:0;}
 .consignmentBlk h5{margin-top:0;}
 .consignmentBlkBg{background:#E9E9E9; height:550px; overflow:auto; padding:10px;}
+
+h5{font-size:18px!important; border-bottom:solid 1px #CCCCCC; margin-bottom:5px; padding-bottom:5px;}
+.clientFilter{border-bottom:solid 1px #CCCCCC; margin-bottom:10px;}
+.amount_pay{background:#E9FEFE;}

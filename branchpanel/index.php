@@ -1,8 +1,17 @@
 <?php 
 require('../config.php');
 include(BRANCH_PATH_ADMIN_INCLUDE.'/head.php');
+ 
 
-?>
+//if($_SESSION['buser']==" ")
+ if (isset($_SESSION['buser'])) {
+ ?>
+  <script>
+  window.location.href = '<?php echo BRANCH_PATH_ADMIN_LINK.'/home.php'; ?>';
+</script>
+ <?php
+
+ }?>
 <script>	
 $(document).ready(function(){
 	$("#msg").hide();

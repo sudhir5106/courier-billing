@@ -8,12 +8,13 @@ require_once (ROOT."/dompdf/dompdf_config.inc.php");
 $dompdf = new DOMPDF();
 
 require (ROOT."/PHPMailer-master/class.phpmailer.php");
- 
+ error_reporting(null);
 //set_include_path(get_include_path() . PATH_SEPARATOR ."dompdf");
 
 ///*******************************************************
 /// Get Client Name
 ///*******************************************************
+
 if($_POST['type']=="getClientName")
 {
 	$isarr = substr_count($_POST['client_name'], '-');		
@@ -47,14 +48,180 @@ if($_POST['type']=="clinetExists")
 }
 
 ///*******************************************************
-/// for customer Name
+/// Get customer's pending invoices //////////////////////
 ///*******************************************************
 if($_POST['type']=="client")
 {	
-	$client=$rateClass->ExecuteQuery("SELECT Client_Name, DATE_FORMAT(Joining_Date,'%d-%m-%Y') AS Joining_Date,(SELECT DATE_FORMAT(MAX(Date_To),'%d-%m-%Y') FROM tbl_invoices I WHERE I.Client_Id=C.Client_Id) AS 'Last_Date' FROM tbl_clients C WHERE Client_Id='".$_POST['client_id']."' AND Branch_Id=".$_SESSION['buser']);
+	$invoice_id=[];
+
+	$invoice_id_amount=[];
+
+	$client=$rateClass->ExecuteQuery("SELECT Invoice_Id, Invoice_No, Date_From, Date_To, Final_Total_Amt FROM tbl_invoices where Client_Id=".$_POST['client_id']);
+
+	$paid_invoice=$rateClass->ExecuteQuery("SELECT sum(Received_Amt) AS amount, Invoice_Id 
+	FROM tbl_received_amt_details  where Client_Id=".$_POST['client_id']." GROUP BY Invoice_Id  ");
+
+	foreach($paid_invoice as $reult_amount)
+          {
+          	$invoice_id[]=$reult_amount['Invoice_Id'];
+          	$invoice_id_amount[]=$reult_amount['amount'];
+   
+          }
+ //print_r($invoice_id);        
+//print_r($invoice_id_amount);
+	?>
+	<script>
+	$(document).ready(function(){
+
+		$('#trdd_cheque').hide();
+   $('#trtransacation').hide();
+   $('#bank_name_row').hide();
+
+   
+	});
 	
-	echo $client[1]['Client_Name'].'@'.$client[1]['Joining_Date'].'@'.$client[1]['Last_Date'];
+	</script>
+	<div class="col-sm-8" >
+		<table class="table table-hover table-bordered" id="addedProducts">
+          <thead>
+            <tr class="success">
+            	<th><input type="checkbox" id="checked_allboxes"  name="select_check"/></th>
+            	<th>SNO.</th>
+            	<th>Invoice Number</th>
+              	<th>Date From</th>
+              	<th>Date To</th>
+              	<th>Total Amount</th>
+              	<th>Paid Amount</th>
+               	<th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+         <?php  
+         	$i=1;
+            $j=0;
+          
+          foreach($client as $reult)
+          { 
+              if (in_array($reult['Invoice_Id'],$invoice_id))
+			 {  //echo $j. $reult['Invoice_No'];   
+               $r=$reult['Final_Total_Amt']-$invoice_id_amount[$j];
+               if($r>0){
+	          ?>
+
+            <tr>
+            <td><input type="checkbox"  class="selecctall" name="checkbox"  id="<?php echo $reult['Invoice_Id']; ?>" /></td>
+             <td><?php echo $i; ?></td>
+              <td id="" class=""><?php echo $reult['Invoice_No']; ?></td>
+              <td id=""><?php echo $reult['Date_From']; ?></td> 
+             <td id=""><?php echo $reult['Date_To']; ?></td> 
+             <td class="amount_final"><?php echo $reult['Final_Total_Amt']; ?></td>
+             <td class="Received_Amt"><?php echo $invoice_id_amount[$j]; ?></td>
+             <td class="balance"><?php echo $r; ?></td>
+            
+             </tr>  
+             <?php $i++; } ?>
+           
+             <?php
+             $j++; 
+             }
+			 else
+			 { ?>
+			 <tr>
+			  <td><input type="checkbox"  class="selecctall" name="checkbox"  id="<?php echo $reult['Invoice_Id']; ?>" /></td>
+             <td><?php echo $i; ?></td>
+             <td id="" class=""><?php echo $reult['Invoice_No']; ?></td>
+             <td id=""><?php echo $reult['Date_From']; ?></td> 
+             <td id=""><?php echo $reult['Date_To']; ?></td> 
+             <td class="amount_final"><?php echo $reult['Final_Total_Amt']; ?></td>
+              <td class="Received_Amt"><?php echo 0 ; ?></td>
+             <td class="balance"><?php echo $reult['Final_Total_Amt']; ?></td>
+             
+             </tr>  
+		<?php $i++; }
+			
+            } 
+
+          ?>
+          </tbody>
+      </table>
+	</div>
+
+	<div class="amount_pay col-sm-4">
+        <form class="form-horizontal" role="form" id="payment_recive_form" method="post">
+          <table class="table table-hover">
+            <tr>
+              <td class="mandatory">Receiving Date<span>*</span></td>
+              <td> <input type="text" class="form-control input-sm" id="from_date" name="from_date" style="width:50%;" value="" placeholder="dd-mm-yyyy" /></td>
+            </tr>
+            <tr>
+              <td width="60%" class="mandatory">Total Amount<span>*</span></td>
+              <td width="40%"><input type="text" id="total_amount" name="total_amount" class="form-control input-sm" style="width:50%;" value="" readonly/></td>
+              <input type="hidden" id="invoice_id_store" name="invoice_id_store" class="form-control input-sm"  value=""/>
+              <input type="hidden" id="invoice_amount_store" name="invoice_amount_store" class="form-control input-sm"  value=""/>
+            </tr>
+            <tr class="">
+              <td>TDS</td>
+              <td><input type="text" id="tds" name="tds" class="form-control input-sm calculate clear_recived_amt" style="width:50%;" value="" /></td>
+            </tr>
+            <tr class="">
+              <td>Bad Debt</td>
+              <td><input type="text" id="baddebt" name="baddebt" class="form-control input-sm calculate clear_recived_amt" style="width:50%;" value="" /></td>
+            </tr>
+            <tr>
+              <td class="mandatory">Received Amount<span>*</span></td>
+              <td><input type="text" id="pay_amount" name="pay_amount" class="form-control input-sm pay_amount calculate" style="width:50%;" value=""/>
+                <br>
+                (<strong>Note:</strong> Sum of (Received Amount + TDS + Bed Debt) should not be greater than Total Amount.)</td>
+              <input type="hidden" id="final_amount" name="final_amount" class="form-control input-sm"  value=""/>
+            </tr>
+            <tr>
+              <td> Mode: </td>
+              <td><input type="radio" name="mode" id="cash" value="cash" class="mode" checked/>
+                Cash
+                <input type="radio" name="mode" id="dd_cheque" value="dd_cheque" class="mode" />
+                DD/CHEQUE
+                <input type="radio" name="mode" id="neft" value="neft" class="mode"/>
+                NEFT </td>
+            </tr>
+            <tr id="trdd_cheque">
+              <td>Cheque/DD/Number</td>
+              <td><input type="text" name="ch_dd_no" id="ch_dd_no" value=""/></td>
+            </tr>
+            <tr id="trtransacation">
+              <td>Transaction No.</td>
+              <td><input type="text" name="transaction_no" id="transaction_no" value=""/></td>
+            </tr>
+            <tr id="bank_name_row">
+              <td>Bank Name</td>
+              <td>
+              	<?php $result_bank = $rateClass->ExecuteQuery("SELECT Bank_Id,Bank_Name FROM tbl_banks"); ?>
+                <select name="bank_name" id="bank_name" class="form-control input-sm">
+                  <option value="">---SELECT ANY ONE---</option>
+                  <?php foreach($result_bank as $sql_result)
+		      {
+		      	?>
+                  <option value="<?php echo $sql_result['Bank_Id']; ?>"><?php echo $sql_result['Bank_Name']; ?></option>
+                  <?php
+		      }
+		        ?>
+                </select>
+                </td>
+            </tr>
+            <tr>
+              <td>Narration</td>
+              <td><textarea rows="4" cols="35" id="narration"></textarea></td>
+            </tr>
+
+             
+            <tr>
+              <td colspan="2" align="center"><input type="button" class="btn btn-primary btn-sm" id="pay_receive_amount" value="RECEIVE"></td>
+            </tr>
+          </table>
+        </form>
+      </div>
 	
+	<?php
+
  }
 
 
@@ -119,18 +286,16 @@ if($_POST['type']=="greaterThenFromDate")
 ///*******************************************************
 if($_POST['type']=="searchClient")
 {
-	//echo "Branch id is". $_SESSION['buser'];
+	
 	$fromDate=date('Y-m-d',strtotime($_POST['from_date']));
 	$toDate=date('Y-m-d',strtotime($_POST['to_date']));
- $sql="SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, Consignment_No, Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name FROM tbl_consignments CO
+
+	$sql="SELECT DATE_FORMAT(Date_Of_Submit, '%d-%m-%Y') AS Date, Consignment_No, Total_Weight_In_KG, Total_Amount, Insurance_Other_Charges, (Total_Amount + Insurance_Other_Charges) AS FinalAmount , D.Destination_Name FROM tbl_consignments CO
 INNER JOIN tbl_destinations D ON D.Destination_Id = CO.Destination_Id
 WHERE Client_Id=".$_POST['client_id']." AND Date_Of_Submit BETWEEN '".$fromDate."' AND '".$toDate."' ORDER BY Date_Of_Submit ASC, Consignment_No ASC";
 	
 	$consignment=$rateClass->ExecuteQuery($sql);
 
-	//$invoice=$rateClass->ExecuteQuery("select DATE_FORMAT(MAX(Date_To),'%d-%m-%Y') as 'Last_Date' from invoice where Customer_Id=(select customer_Id from customer_master where Customer_Code='".$_REQUEST['cust_code']."')");
-
-	//echo $_REQUEST['cust_code']."@".$invoice[1]['Last_Date']."@";
 	?>
 <div class="clear formbgstyle" style="padding-top:5px;">
 <?php if(count($consignment) > 0){?>
@@ -151,9 +316,8 @@ WHERE Client_Id=".$_POST['client_id']." AND Date_Of_Submit BETWEEN '".$fromDate.
             <?php 
 		
 			 $i=1;
-			 $amount_here=0;
 			 foreach($consignment as $val)
- 		{  $amount_here=$amount_here+$val['Total_Amount'];      
+ 		{            
             ?>
             <tr>
               <td ><?php echo $i;?></td>
@@ -174,9 +338,7 @@ WHERE Client_Id=".$_POST['client_id']." AND Date_Of_Submit BETWEEN '".$fromDate.
         </div>
         <div class="form-group" id="hidediv">
              <div class="col-sm-2   col-sm-offset-5" align="center">
-             <input type="text" value="<?php echo $amount_here; ?>"/>
                <input type="button" class="btn btn-primary btn-sm" id="generate" value="Generate Invoice">
-
              </div>
          </div>
         <?php }
@@ -256,8 +418,7 @@ if($_POST['type']=="generateInvoice")
 		$KKC_Tax = sprintf('%0.2f',($subtotal*$tax[1]['KKC_Tax'])/100);
 		$Final_Total_Amt = sprintf('%0.2f',($subtotal + $serviceTax + $SB_Tax + $KKC_Tax));
 		
-		// Query to get the Max Invoice No
-		//$invno=$rateClass->ExecuteQuery("SELECT Invoice_No FROM tbl_invoices WHERE Invoice_Id= (SELECT MAX(Invoice_Id) FROM tbl_invoices) AND Branch_Id = ".$_SESSION['buser']);
+		
 		
 		$invno=$rateClass->ExecuteQuery("SELECT Invoice_No FROM tbl_invoices WHERE Invoice_Id= (SELECT MAX(Invoice_Id) FROM tbl_invoices WHERE Branch_Id = ".$_SESSION['buser'].")");
 		
@@ -1020,5 +1181,190 @@ $words[$point = $point % 10] : '';
 	echo $html2;
 	
 }// eof if condition for update type
+
+////////////////**FOR PAYMENT RECEIVE FORM**////////////////
+
+if($_POST['type']=="payment_receive")
+{
+
+   $con= mysql_connect(SERVER,DBUSER,DBPASSWORD);
+	mysql_query('SET AUTOCOMMIT=0',$con);
+	mysql_query('START TRANSACTION',$con);	
+	
+			$invoice_id_store=$_POST['invoice_id_store'];
+			$invoice_number=explode(',',$invoice_id_store);
+			$transaction_no=$_POST['transaction_no'];
+			$cheque_no=$_POST['cheque_no'];
+			$bank_name=$_POST['bank_name'];
+			$total_amount=$_POST['total_amount'];
+			$received=$_POST['received'];
+			$tds=$_POST['tds'];
+			$baddebt=$_POST['debt'];
+			$payment_mode=$_POST['payment_mode'];
+			$client_code=$_POST['client_code'];
+			$invoice_amount_store=$_POST['invoice_amount_store'];
+			$invoice_amount_store=explode(',',$invoice_amount_store);
+			$narration=$_POST['narration'];
+			$str=$_REQUEST['from_date'];
+			$date=explode("-", $str);
+			$date=$date[2].'-'.$date[1].'-'.$date[0];
+try
+{
+  
+		   $invno=$rateClass->ExecuteQuery("SELECT MAX(Receipt_No) as Receipt_No FROM  tbl_received_amt");
+				
+				// Generate Invoice No serial wise
+				if(!empty($invno[1]['Receipt_No'])){
+					$maxReceipt_No = explode('-', $invno[1]['Receipt_No']);
+					//$maxInvoiceNo = $invno[1]['Invoice_No'];
+					$Receipt_No = sprintf( '%08d', ($maxReceipt_No [1] + 1) );
+				}
+				else{
+					$Receipt_No = sprintf( '%08d', 1);	
+				}
+
+		$sql_branch="SELECT Branch_Code, Branch_Name FROM tbl_branchs WHERE Branch_Id='".$_SESSION['buser']."'";
+		$result=$rateClass->ExecuteQuery($sql_branch);
+		    
+			$insertInvoice=mysql_query("INSERT INTO tbl_received_amt (Payment_Date,Payment_Received,TDS,Bad_Debt,Payment_Mode,Cheque_DD_No,Transaction_No,Bank_Id,Narration,Receipt_No,Total_invoices_Amt)
+			VALUES('".$date."','".$received."','".$tds."','".$baddebt."','".$payment_mode."','".$cheque_no."','".$transaction_no."',
+		'".$bank_name."','".$narration."','".$result[1]['Branch_Code']."-".$Receipt_No."','".$total_amount."')");
+
+
+		    if(!$insertInvoice)
+		    {
+		    	
+		    	throw new Exception('erro on tbl_received_amt');
+		    }
+		     if($insertInvoice)
+		    {
+		    	
+		    	
+
+              	        $invno_last=$rateClass->ExecuteQuery("SELECT MAX(RID) as Receipt_No FROM  tbl_received_amt");
+                   $rest=0;
+      for($i=0;$i<count($invoice_number)-1;$i++)
+              {          
+                         $pay_amount=$received+$tds+$baddebt;
+                      	   $invoice_id=$invoice_number[$i];
+                      	  //**checkink for first invoice**//
+                  	    if($i==0){        
+		                  	    	//** now check received amount is small or not to received toatal amount**//
+		                  	    	if($pay_amount<$invoice_amount_store[$i])
+		                  	    	{
+			                  	    	$amount_submit=$pay_amount; 
+			                  	    	//echo "this is code"."amount submit is".$amount_submit;
+		                  	    	}         	    		
+		                           	else{ 
+                                          
+			                           	$amount_submit=$invoice_amount_store[$i];
+		                           	 	 //** create balence amount for inserting next invoice **//
+			                           	 $rest=$pay_amount-$amount_submit; 
+			                           	}                
+		                                                               	    	
+		                  	    	  	$insertInvoice_new=mysql_query("INSERT INTO tbl_received_amt_details
+		                  	 (Invoice_Id,Received_Amt,RID,Client_Id)VALUES('".$invoice_id."','".$amount_submit."','".
+		                  	    $invno_last[1]['Receipt_No']."',
+		                  	  '".$client_code."')");	
+		                                                
+		                          if(!$insertInvoice_new)
+		                              {
+		    	
+		                           	  throw new Exception('erro on tbl_received_amt_details');
+		                               }
+		                  	 
+                  	      }//if i==0 close
+                            else{
+                            
+                            	 
+                                 $amount_submit=$invoice_amount_store[$i];
+                                 
+                                
+		                                if($rest>$amount_submit)
+		                  	    	   { 
+						                  	    	  
+					                                   
+					                                   $insertInvoice_latest=mysql_query("INSERT INTO tbl_received_amt_details
+					                      	   (Invoice_Id,Received_Amt,RID,Client_Id)VALUES('".$invoice_id."','".$amount_submit."','".
+					                      	     $invno_last[1]['Receipt_No']."',
+					                      	  '".$client_code."')");
+
+					                              if(!$insertInvoice_latest)
+					                              {
+					    	                      	 throw new Exception('erro on tbl_received_amt_details-insertInvoice_latest');
+					                              } //if throw close
+
+					                             
+					                             
+					                      	       $rest=$rest-$amount_submit;
+					                  } // if condition close
+                  	    	  else
+                  	    	  {
+                                  
+                                  
+			                                 $insertInvoice_else=mysql_query("INSERT INTO tbl_received_amt_details
+			                      	   (Invoice_Id,Received_Amt,RID,Client_Id)VALUES('".$invoice_id."','".$rest."','".
+			                      	     $invno_last[1]['Receipt_No']."',
+			                      	  '".$client_code."')");
+			                      	     if(!$insertInvoice_else)
+	                                    {
+	    	                     	        throw new Exception('erro on tbl_received_amt_details-insertInvoice_else');
+	                                     }
+
+                             
+                  	    	  } //else close
+                             
+                      	
+                      	
+                          	
+                                }   //else final close
+                      	 
+                           //*{/    ******** for updating tbl_invoices ********
+                           $sql_invoice_get_amount="SELECT Final_Total_Amt FROM tbl_invoices WHERE Invoice_Id='".$invoice_number[$i]."'";
+                           $result_id_amount=$rateClass->ExecuteQuery($sql_invoice_get_amount);
+
+                          $sql_tbl_received_amt_details="select sum(Received_Amt) as amount from  tbl_received_amt_details where Invoice_Id='$invoice_id'";
+                          $tbl_sql_tbl_received_amt_details=$rateClass->ExecuteQuery($sql_tbl_received_amt_details);
+
+                          if($result_id_amount[1]['Final_Total_Amt']==$tbl_sql_tbl_received_amt_details[1]['amount'])
+                          {
+                          	                      $tableField=array('Payment_Status');
+                          	                      $tableValue=array('1');
+                          	                      $condition=" Invoice_Id='".$invoice_id."'";		
+                                                  $res_condition=$rateClass->updateValue("tbl_invoices",$tableField,$tableValue,$condition);
+                                                 if(!$res_condition)
+                                                    {   	
+                           	                         throw new Exception('erro on update tbl_invoices');
+                                                    }
+
+
+                          }
+                             //*}/
+                             
+               }     // for loop close///
+	                      		                      	
+       
+	                   
+       
+               
+
+                    
+
+         
+       
+    } //$insertInvoice
+
+mysql_query("COMMIT",$con);
+		echo "1";
+}   //try close //
+catch(Exception $e)
+	{
+		echo  $e->getMessage();
+		mysql_query('ROLLBACK',$con);
+		mysql_query('SET AUTOCOMMIT=1',$con);
+	}
+////////////////FOR PAYMENT RECEIVE FORM END////////////////
+
+}
 
 ?>

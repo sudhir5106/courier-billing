@@ -4,12 +4,21 @@ include(BRANCH_PATH_MASTERS.'/include/head.php');
 
 $db = new DBConn();
 
-if(!isset($_SESSION['buser']))
-{?>
-<script>
-	window.location.href = '<?php echo BRANCH_PATH_ADMIN_LINK.'/index.php'; ?>';
+//if(!isset($_SESSION['buser']))
+
+if (isset($_SESSION['buser'])) {
+ ?>
+   
+ <?php
+
+ } 
+ else {
+   ?>
+   <script>
+  window.location.href = '<?php echo BRANCH_PATH_ADMIN_LINK.'/index.php'; ?>';
 </script>
-<?php }
+   <?php
+ }
 ?>
 <script>
 $(document).ready(function() {
@@ -57,6 +66,7 @@ $res=$db->ExecuteQuery($sql);
 
 <nav class="navbar navbar-inverse top-nav	" role="navigation" style="border-radius:0;">
   <ul class="nav nav-pills dropdown open">
+   <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/home.php" > Dashboard</a></li>
     <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="100"> Masters <b class="caret"></b></a>
       <ul class="dropdown-menu multi-level">
         <li><a tabindex="-1" href="<?php echo BRANCH_MASTERS_LINK_CONTROL?>/operator">Operators</a></li>
@@ -70,9 +80,10 @@ $res=$db->ExecuteQuery($sql);
     	<ul class="dropdown-menu">
             <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/invoice/"> Generate Invoice </a></li>
             <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/invoice/report.php"> Invoice Report</a></li>
-            <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/paymentreport/"> Payment Receipt Report</a></li>
+            
         </ul>
     </li>
+    <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/receive_payment/" >  Receive Payment</a></li>
     <li><a tabindex="-1" href="<?php echo BRANCH_PATH_ADMIN_LINK?>/changepwd/">Change Password</a></li>
   </ul>
 </nav>

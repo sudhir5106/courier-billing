@@ -4,7 +4,8 @@ require_once(PATH_LIBRARIES.'/classes/DBConn.php');
 include(BRANCH_PATH_ADMIN_INCLUDE.'/header.php');
 $db = new DBConn();
 
-	$ChangePwd=$db->ExecuteQuery("SELECT Password FROM branch_master WHERE Branch_Id=".$_SESSION['buser']."");
+	$ChangePwd=$db->ExecuteQuery("SELECT Password FROM tbl_branchs  WHERE Branch_Id='".$_SESSION['buser']."'");
+echo "SELECT Password FROM tbl_branchs WHERE Branch_Id='".$_SESSION['buser']."'";
 ?>
 <script type="text/javascript" src="pwd.js"></script>
 <div class="main">

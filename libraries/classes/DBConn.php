@@ -104,7 +104,7 @@ function ConnToServer()
          $i++; 
     } 
 	 //here condition clause will add into sql query 
-      $sql = $sql . " WHERE " . $condition . ""; 
+      echo $sql = $sql . " WHERE " . $condition . ""; 
 	  
 	 //echo $sql;
 	 //($sql."<br>");

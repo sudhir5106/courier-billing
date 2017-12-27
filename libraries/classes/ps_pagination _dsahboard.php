@@ -15,7 +15,7 @@
 
 class PS_Pagination {
 	var $php_self;
-	var $rows_per_page = 20; //Number of records to display per page
+	var $rows_per_page = 10; //Number of records to display per page
 	var $total_rows = 0; //Total number of rows returned by the query
 	var $links_per_page = 5; //Number of links to display per page
 	var $append = ""; //Paremeters to append to pagination links
@@ -36,9 +36,10 @@ class PS_Pagination {
 	 * @param string $append Parameters to be appended to pagination links 
 	 */
 	
-	function PS_Pagination($connection, $sql, $rows_per_page = 20, $links_per_page = 5, $append = "") {
+	function PS_Pagination($connection, $sql, $rows_per_page = 10, $links_per_page = 5, $append = "") {
 		$this->conn = $connection;
 		$this->sql = $sql;
+		
 		$this->rows_per_page = (int)$rows_per_page;
 		if (intval($links_per_page ) > 0) {
 			$this->links_per_page = (int)$links_per_page;
@@ -47,9 +48,9 @@ class PS_Pagination {
 		}
 		$this->append = $append;
 		$this->php_self = htmlspecialchars($_SERVER['PHP_SELF'] );
-		if (isset($_GET['page'] )) {
-			$this->page = intval($_GET['page'] );
-		}
+		if (isset($_GET['new_page'] )) {
+			$this->page = intval($_GET['new_page'] );
+			}
 	}
 	
 	/**
@@ -229,7 +230,7 @@ class PS_Pagination {
 	 * @return string
 	 */
 	function renderFullNav() {
-		return '<ul class="pagination no-print pagination_second">'.$this->renderFirst() . '&nbsp' . $this->renderPrev() . '&nbsp;' . $this->renderNav() . '&nbsp;' . $this->renderNext() . '&nbsp;' . $this->renderLast().'</ul>';
+		return '<ul class="pagination no-print pagination_first ">'.$this->renderFirst() . '&nbsp' . $this->renderPrev() . '&nbsp;' . $this->renderNav() . '&nbsp;' . $this->renderNext() . '&nbsp;' . $this->renderLast().'</ul>';
 	}
 	
 	/**
